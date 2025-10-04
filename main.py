@@ -302,8 +302,14 @@ def init_db():
                 role="admin",
             )
             db.session.add(admin_employee)
+            db.session.flush()  # Flush to get the employeeid
 
-            admin = Admin(fname="Admin", lname="User", email="admin@caa.co.uk")
+            admin = Admin(
+                employeeid=admin_employee.employeeid,
+                fname="Admin",
+                lname="User",
+                email="admin@caa.co.uk",
+            )
             db.session.add(admin)
 
             db.session.commit()

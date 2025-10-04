@@ -26,6 +26,9 @@ class Employee(db.Model):
     support_tickets = db.relationship(
         "SupportTicket", back_populates="employee", cascade="all, delete-orphan"
     )
+    admin_profile = db.relationship(
+        "Admin", back_populates="employee", uselist=False, cascade="all, delete-orphan"
+    )
 
     __table_args__ = (
         db.CheckConstraint("role IN ('staff', 'senior', 'admin')", name="check_role"),
@@ -113,11 +116,17 @@ class Admin(db.Model):
     adminid = db.Column(
         db.Integer, primary_key=True, autoincrement=True, nullable=False, unique=True
     )
+    employeeid = db.Column(
+        db.Integer,
+        db.ForeignKey("employees.employeeid", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=True,
+    )
     fname = db.Column(db.Text, nullable=False)
     lname = db.Column(db.Text, nullable=False)
     email = db.Column(db.Text, nullable=False)
 
     # Relationships
+    employee = db.relationship("Employee", back_populates="admin_profile")
     support_tickets = db.relationship(
         "SupportTicket", back_populates="admin", cascade="all, delete-orphan"
     )
