@@ -1,0 +1,60 @@
+{% extends "base.html" %} {% block title %}{{ room.roomname }} - Meeting Room
+Booking System{% endblock %} {% block content %}
+<h2>{{ room.roomname }}</h2>
+
+<hr />
+
+<h3>Room Details</h3>
+<table border="1">
+  <tr>
+    <th>Room Name</th>
+    <td>{{ room.roomname }}</td>
+  </tr>
+  <tr>
+    <th>Floor</th>
+    <td>{{ room.floor }}</td>
+  </tr>
+  <tr>
+    <th>Capacity</th>
+    <td>{{ room.capacity }} people</td>
+  </tr>
+  <tr>
+    <th>Room ID</th>
+    <td>{{ room.roomid }}</td>
+  </tr>
+</table>
+
+<hr />
+
+<h3>Current Bookings</h3>
+{% if bookings %}
+<table border="1">
+  <thead>
+    <tr>
+      <th>Booking ID</th>
+      <th>Employee</th>
+      <th>Start Time</th>
+      <th>End Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for booking in bookings %}
+    <tr>
+      <td>{{ booking.bookingid }}</td>
+      <td>{{ booking.employee.fname }} {{ booking.employee.lname }}</td>
+      <td>{{ booking.timebegin }}</td>
+      <td>{{ booking.timefinish }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No current bookings for this room.</p>
+{% endif %}
+
+<hr />
+
+<p><a href="{{ url_for('new_booking') }}">Book This Room</a></p>
+<p><a href="{{ url_for('rooms') }}">Back to Rooms List</a></p>
+<p><a href="{{ url_for('dashboard') }}">Back to Dashboard</a></p>
+{% endblock %}

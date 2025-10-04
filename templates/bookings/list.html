@@ -1,0 +1,53 @@
+{% extends "base.html" %} {% block title %}My Bookings - Meeting Room Booking
+System{% endblock %} {% block content %}
+<h2>My Bookings</h2>
+
+<hr />
+
+{% if bookings %}
+<table border="1">
+  <thead>
+    <tr>
+      <th>Booking ID</th>
+      <th>Room</th>
+      <th>Floor</th>
+      <th>Start Time</th>
+      <th>End Time</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for booking in bookings %}
+    <tr>
+      <td>{{ booking.bookingid }}</td>
+      <td>{{ booking.room.roomname }}</td>
+      <td>{{ booking.room.floor }}</td>
+      <td>{{ booking.timebegin }}</td>
+      <td>{{ booking.timefinish }}</td>
+      <td>
+        <form
+          method="POST"
+          action="{{ url_for('cancel_booking', booking_id=booking.bookingid) }}"
+          style="display: inline"
+        >
+          <button
+            type="submit"
+            onclick="return confirm('Are you sure you want to cancel this booking?')"
+          >
+            Cancel
+          </button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>You have no bookings.</p>
+{% endif %}
+
+<hr />
+
+<p><a href="{{ url_for('new_booking') }}">Create New Booking</a></p>
+<p><a href="{{ url_for('dashboard') }}">Back to Dashboard</a></p>
+{% endblock %}

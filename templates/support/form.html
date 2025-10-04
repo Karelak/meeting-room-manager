@@ -1,0 +1,93 @@
+{% extends "base.html" %} {% block title %}Support - Meeting Room Booking
+System{% endblock %} {% block content %}
+<h2>Support & Help</h2>
+
+<hr />
+
+<h3>Submit a Support Ticket</h3>
+
+<form method="POST" action="{{ url_for('support') }}">
+  <div>
+    <label for="subject">Subject:</label>
+    <input type="text" id="subject" name="subject" required />
+  </div>
+
+  <div>
+    <label for="message">Message:</label>
+    <textarea id="message" name="message" rows="5" required></textarea>
+  </div>
+
+  <div>
+    <button type="submit">Submit Ticket</button>
+  </div>
+</form>
+
+<hr />
+
+<h3>Your Support Tickets</h3>
+
+{% if tickets %}
+<table border="1">
+  <thead>
+    <tr>
+      <th>Ticket ID</th>
+      <th>Subject</th>
+      <th>Message</th>
+      <th>Submitted At</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for ticket in tickets %}
+    <tr>
+      <td>{{ ticket.ticketid }}</td>
+      <td>{{ ticket.subject }}</td>
+      <td>{{ ticket.message }}</td>
+      <td>{{ ticket.created_at }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>You have not submitted any support tickets.</p>
+{% endif %}
+
+<hr />
+
+<h3>Frequently Asked Questions</h3>
+
+<h4>How do I book a meeting room?</h4>
+<p>
+  Click on "My Bookings" in the navigation menu, then click "Create New
+  Booking". Select a room, choose your time slot, and submit the form.
+</p>
+
+<h4>How do I cancel a booking?</h4>
+<p>
+  Go to "My Bookings" and click the "Cancel" button next to the booking you wish
+  to cancel.
+</p>
+
+<h4>What happens if there's a conflict?</h4>
+<p>
+  The system automatically checks for conflicts. If the room is already booked
+  for your selected time, you will receive an error message and need to choose a
+  different time or room.
+</p>
+
+<h4>How do I view room details?</h4>
+<p>
+  Click on "Rooms" in the navigation menu to see all available rooms. Click
+  "View Details" next to any room to see its capacity, floor, and current
+  bookings.
+</p>
+
+<h4>Who can I contact for technical support?</h4>
+<p>
+  Submit a support ticket using the form above, and an administrator will
+  respond as soon as possible.
+</p>
+
+<hr />
+
+<p><a href="{{ url_for('dashboard') }}">Back to Dashboard</a></p>
+{% endblock %}

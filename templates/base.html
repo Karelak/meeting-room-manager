@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block title %}Meeting Room Booking System{% endblock %}</title>
+  </head>
+  <body>
+    <header>
+      <h1>CAA Meeting Room Booking System</h1>
+      {% if user %}
+      <nav>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('rooms') }}">Rooms</a>
+        <a href="{{ url_for('bookings') }}">My Bookings</a>
+        <a href="{{ url_for('notifications') }}">Notifications</a>
+        <a href="{{ url_for('support') }}">Support</a>
+        {% if user.role == 'admin' %}
+        <a href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a>
+        {% endif %}
+        <a href="{{ url_for('logout') }}">Logout</a>
+      </nav>
+      <p>Logged in as: {{ user.fname }} {{ user.lname }} ({{ user.role }})</p>
+      {% endif %}
+    </header>
+
+    <main>
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div class="flash-{{ category }}">{{ message }}</div>
+      {% endfor %} {% endif %} {% endwith %} {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+      <p>&copy; 2025 Civil Aviation Authority - Meeting Room Booking System</p>
+      <p>Computer Science NEA - Kaarel Part - The College of Richard Collyer</p>
+    </footer>
+  </body>
+</html>

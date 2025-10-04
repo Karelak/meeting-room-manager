@@ -1,0 +1,42 @@
+{% extends "base.html" %} {% block title %}Rooms - Meeting Room Booking System{%
+endblock %} {% block content %}
+<h2>Meeting Rooms</h2>
+
+<p>Browse available meeting rooms and check their availability.</p>
+
+<hr />
+
+{% if rooms %}
+<table border="1">
+  <thead>
+    <tr>
+      <th>Room Name</th>
+      <th>Floor</th>
+      <th>Capacity</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for room in rooms %}
+    <tr>
+      <td>{{ room.roomname }}</td>
+      <td>{{ room.floor }}</td>
+      <td>{{ room.capacity }} people</td>
+      <td>
+        <a href="{{ url_for('room_detail', room_id=room.roomid) }}"
+          >View Details</a
+        >
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No rooms available.</p>
+{% endif %}
+
+<hr />
+
+<p><a href="{{ url_for('new_booking') }}">Create New Booking</a></p>
+<p><a href="{{ url_for('dashboard') }}">Back to Dashboard</a></p>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %} {% block title %}New Booking - Meeting Room Booking
+System{% endblock %} {% block content %}
+<h2>Create New Booking</h2>
+
+<hr />
+
+<form method="POST" action="{{ url_for('new_booking') }}">
+  <div>
+    <label for="roomid">Select Room:</label>
+    <select id="roomid" name="roomid" required>
+      <option value="">-- Choose a room --</option>
+      {% for room in rooms %}
+      <option value="{{ room.roomid }}">
+        {{ room.roomname }} (Floor {{ room.floor }}, Capacity: {{ room.capacity
+        }})
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div>
+    <label for="timebegin">Start Time:</label>
+    <input type="datetime-local" id="timebegin" name="timebegin" required />
+  </div>
+
+  <div>
+    <label for="timefinish">End Time:</label>
+    <input type="datetime-local" id="timefinish" name="timefinish" required />
+  </div>
+
+  <div>
+    <button type="submit">Create Booking</button>
+    <a href="{{ url_for('bookings') }}">Cancel</a>
+  </div>
+</form>
+
+<hr />
+
+<h3>Booking Instructions</h3>
+<ul>
+  <li>Select a room from the dropdown list</li>
+  <li>Choose your start and end times</li>
+  <li>The system will automatically check for conflicts</li>
+  <li>You will receive a confirmation once the booking is created</li>
+</ul>
+
+<hr />
+
+<p><a href="{{ url_for('rooms') }}">View Room Details</a></p>
+<p><a href="{{ url_for('dashboard') }}">Back to Dashboard</a></p>
+{% endblock %}
