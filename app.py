@@ -37,7 +37,6 @@ def login():
         if employee and employee.password == password:
             session["employeeid"] = employee.employeeid
             session["role"] = employee.role
-            flash(f"Welcome, {employee.fname}!", "success")
             return redirect(url_for("dashboard"))
         else:
             flash("Invalid email or password", "error")
@@ -281,7 +280,61 @@ def init_db():
             db.session.commit()
             print("Database initialized with admin account")
 
+def generate_demo_data():
+    with app.app_context():
+        # Ensure tables exist (safe if already created)
+        db.create_all()
+
+        # 1 staff user
+        staff_email = "jane.doe@example.com"
+        employee = Employee.query.filter_by(email=staff_email).first()
+        if not employee:
+            employee = Employee(
+                fname="Jane",
+                lname="Doe",
+                email=staff_email,
+                password="password123",
+                role="staff",
+            )
+            db.session.add(employee)
+            db.session.flush()  # get employeeid
+
+        # 4 rooms
+        rooms_to_create = [
+            {"roomname": "Alpha", "floor": 1, "capacity": 4},
+            {"roomname": "Beta", "floor": 1, "capacity": 8},
+            {"roomname": "Gamma", "floor": 2, "capacity": 12},
+            {"roomname": "Delta", "floor": 3, "capacity": 20},
+        ]
+        for r in rooms_to_create:
+            if not Room.query.filter_by(roomname=r["roomname"]).first():
+                db.session.add(Room(**r))
+        db.session.flush()
+
+        # 2 bookings for that user (only if they have none)
+        if Booking.query.filter_by(employeeid=employee.employeeid).count() == 0:
+            room_alpha = Room.query.filter_by(roomname="Alpha").first() or Room.query.first()
+            room_beta = Room.query.filter_by(roomname="Beta").first() or room_alpha
+
+            booking1 = Booking(
+                employeeid=employee.employeeid,
+                roomid=room_alpha.roomid,
+                timebegin="2025-10-10 09:00",
+                timefinish="2025-10-10 10:00",
+            )
+            booking2 = Booking(
+                employeeid=employee.employeeid,
+                roomid=room_beta.roomid,
+                timebegin="2025-10-10 11:00",
+                timefinish="2025-10-10 12:00",
+            )
+            db.session.add_all([booking1, booking2])
+
+        db.session.commit()
+        print("Demo data generated.")
+
 
 if __name__ == "__main__":
     init_db()
+    generate_demo_data() # testing purposes
     app.run(debug=True)
