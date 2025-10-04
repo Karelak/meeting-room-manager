@@ -179,35 +179,6 @@ def cancel_booking(booking_id):
     return redirect(url_for("bookings"))
 
 
-@app.route("/notifications")
-def notifications():
-    if not is_logged_in():
-        return redirect(url_for("login"))
-
-    user = get_current_user()
-    all_notifications = (
-        Notification.query.filter_by(employeeid=user.employeeid)
-        .order_by(Notification.created_at.desc())
-        .all()
-    )
-
-    return render_template(
-        "notifications/list.html", user=user, notifications=all_notifications
-    )
-
-
-@app.route("/notifications/<int:notification_id>/read", methods=["POST"])
-def mark_notification_read(notification_id):
-    if not is_logged_in():
-        return redirect(url_for("login"))
-
-    notification = Notification.query.get_or_404(notification_id)
-    notification.is_read = 1
-    db.session.commit()
-
-    return redirect(url_for("notifications"))
-
-
 @app.route("/support", methods=["GET", "POST"])
 def support():
     if not is_logged_in():
