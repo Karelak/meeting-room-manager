@@ -68,15 +68,4 @@ System{% endblock %} {% block content %}
 <p><a href="{{ url_for('notifications') }}">View all notifications</a></p>
 {% else %}
 <p>No unread notifications.</p>
-{% endif %}
-
-<hr />
-
-<h3>Quick Actions</h3>
-<ul>
-  <li><a href="{{ url_for('new_booking') }}">Create New Booking</a></li>
-  <li><a href="{{ url_for('rooms') }}">Browse Rooms</a></li>
-  <li><a href="{{ url_for('bookings') }}">View All My Bookings</a></li>
-  <li><a href="{{ url_for('support') }}">Submit Support Ticket</a></li>
-</ul>
-{% endblock %}
+{% endif %} {% endblock %}

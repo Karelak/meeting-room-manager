@@ -1,7 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from models import db, Employee, Room, Booking, Notification, Admin, SupportTicket
-from datetime import datetime
-import os
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "dev-secret-key-change-in-production"
@@ -240,10 +238,61 @@ def support():
     return render_template("support/form.html", user=user, tickets=tickets)
 
 
+@app.route("/admin/rooms/new", methods=["POST"])
+def admin_create_room():
+    if not is_logged_in() or session.get("role") != "admin":
+        flash("Access denied", "error")
+        return redirect(url_for("dashboard"))
+
+    roomname = request.form.get("roomname")
+    floor = request.form.get("floor")
+    capacity = request.form.get("capacity")
+
+    if roomname and floor and capacity:
+        room = Room(roomname=roomname, floor=int(floor), capacity=int(capacity))
+        db.session.add(room)
+        db.session.commit()
+        flash("Room created successfully", "success")
+    else:
+        flash("All fields are required", "error")
+
+    return redirect(url_for("admin_dashboard"))
+
+
+@app.route("/admin/users/new", methods=["POST"])
+def admin_create_user():
+    if not is_logged_in() or session.get("role") != "admin":
+        flash("Access denied", "error")
+        return redirect(url_for("dashboard"))
+
+    fname = request.form.get("fname")
+    lname = request.form.get("lname")
+    email = request.form.get("email")
+    password = request.form.get("password")
+    role = request.form.get("role")
+
+    if fname and lname and email and password and role:
+        # Check if email already exists
+        existing = Employee.query.filter_by(email=email).first()
+        if existing:
+            flash("Email already exists", "error")
+        else:
+            employee = Employee(
+                fname=fname, lname=lname, email=email, password=password, role=role
+            )
+            db.session.add(employee)
+            db.session.commit()
+            flash("User created successfully", "success")
+    else:
+        flash("All fields are required", "error")
+
+    return redirect(url_for("admin_dashboard"))
+
+
 def init_db():
     with app.app_context():
         db.create_all()
-
+        # Create admin account if no employees exist
         if Employee.query.count() == 0:
             admin_employee = Employee(
                 fname="Admin",
@@ -257,26 +306,8 @@ def init_db():
             admin = Admin(fname="Admin", lname="User", email="admin@caa.co.uk")
             db.session.add(admin)
 
-            staff = Employee(
-                fname="John",
-                lname="Smith",
-                email="john.smith@caa.co.uk",
-                password="password123",
-                role="staff",
-            )
-            db.session.add(staff)
-
-            rooms = [
-                Room(floor=1, roomname="Conference Room A", capacity=10),
-                Room(floor=1, roomname="Meeting Room B", capacity=6),
-                Room(floor=2, roomname="Board Room", capacity=20),
-                Room(floor=2, roomname="Small Meeting Room", capacity=4),
-            ]
-            for room in rooms:
-                db.session.add(room)
-
             db.session.commit()
-            print("Database initialized with sample data")
+            print("Database initialized with admin account")
 
 
 if __name__ == "__main__":
