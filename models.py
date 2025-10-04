@@ -1,8 +1,3 @@
-"""
-Database models for the Meeting Room Booking System
-Based on the schema defined in the project README
-"""
-
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
