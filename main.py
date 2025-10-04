@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-from models import db, Employee, Room, Booking, Notification, Admin, SupportTicket
+from models import db, Employee, Room, Booking, Admin, SupportTicket
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "dev-secret-key-change-in-production"
@@ -16,7 +16,7 @@ def is_logged_in():
 
 def get_current_user():
     if is_logged_in():
-        return Employee.query.get(session["employeeid"])
+        return db.session.get(Employee, session["employeeid"])
     return None
 
 
@@ -59,13 +59,8 @@ def dashboard():
 
     user = get_current_user()
     bookings = Booking.query.filter_by(employeeid=user.employeeid).all()
-    notifications = Notification.query.filter_by(
-        employeeid=user.employeeid, is_read=0
-    ).all()
 
-    return render_template(
-        "dashboard/main.html", user=user, bookings=bookings, notifications=notifications
-    )
+    return render_template("dashboard/main.html", user=user, bookings=bookings)
 
 
 @app.route("/admin/dashboard")
