@@ -172,6 +172,23 @@ def cancel_booking(booking_id):
 
     return redirect(url_for("bookings"))
 
+@app.route("/support/<int:ticket_id>/delete", methods=["POST"])
+def delete_ticket(ticket_id):
+    if not is_logged_in() or session.get("role") != "admin":
+        flash("Access denied", "error")
+        return redirect(url_for("dashboard"))
+    user = get_current_user()
+    ticket = SupportTicket.query.get_or_404(ticket_id)
+    if user.role != "admin":
+        flash("You cannot delete tickets","error")
+        return redirect(url_for("dashboard"))
+    
+    db.session.delete(ticket)
+    db.session.commit()
+    
+    flash("Ticket deleted successfully", "success")
+    return redirect(url_for("admin_dashboard"))
+
 
 @app.route("/support", methods=["GET", "POST"])
 def support():
@@ -237,7 +254,6 @@ def admin_create_user():
     role = request.form.get("role")
 
     if fname and lname and email and password and role:
-        # Check if email already exists
         existing = Employee.query.filter_by(email=email).first()
         if existing:
             flash("Email already exists", "error")
@@ -329,6 +345,41 @@ def generate_demo_data():
                 timefinish="2025-10-10 12:00",
             )
             db.session.add_all([booking1, booking2])
+
+        # Ensure at least one admin exists (create a lightweight admin profile if missing)
+        admin = Admin.query.first()
+        if not admin:
+            # Try to reuse an existing admin employee if present, otherwise create one
+            admin_employee = Employee.query.filter_by(email="admin@caa.co.uk").first()
+            if not admin_employee:
+                admin_employee = Employee(
+                    fname="Admin",
+                    lname="User",
+                    email="admin@caa.co.uk",
+                    password="admin123",
+                    role="admin",
+                )
+                db.session.add(admin_employee)
+                db.session.flush()
+
+            admin = Admin(
+                employeeid=admin_employee.employeeid,
+                fname=admin_employee.fname,
+                lname=admin_employee.lname,
+                email=admin_employee.email,
+            )
+            db.session.add(admin)
+            db.session.flush()
+
+        # Add a demo support ticket for the demo staff user if they have none
+        if SupportTicket.query.filter_by(employeeid=employee.employeeid).count() == 0:
+            ticket = SupportTicket(
+                employeeid=employee.employeeid,
+                adminid=admin.adminid,
+                subject="Demo: Assistance needed",
+                message="This is a demo support ticket created during demo data generation.",
+            )
+            db.session.add(ticket)
 
         db.session.commit()
         print("Demo data generated.")
