@@ -2,9 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from models import db, Employee, Room, Booking, Admin, SupportTicket
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "dev-secret-key-change-in-production"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///meeting_rooms.db"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 
 db.init_app(app)
@@ -58,7 +56,7 @@ def dashboard():
 
     user = get_current_user()
     bookings = Booking.query.filter_by(employeeid=user.employeeid).all()
-
+    
     return render_template("dashboard/main.html", user=user, bookings=bookings)
 
 
