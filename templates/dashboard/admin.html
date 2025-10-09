@@ -2,18 +2,6 @@
 Booking System{% endblock %} {% block content %}
 <h2>Admin Dashboard</h2>
 
-<hr />
-
-<h3>System Overview</h3>
-<ul>
-  <li>Total Employees: {{ employees|length }}</li>
-  <li>Total Rooms: {{ rooms|length }}</li>
-  <li>Total Bookings: {{ bookings|length }}</li>
-  <li>Support Tickets: {{ tickets|length }}</li>
-</ul>
-
-<hr />
-
 <h3>All Bookings</h3>
 {% if bookings %}
 <table border="1">

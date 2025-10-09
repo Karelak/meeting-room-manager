@@ -1,12 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from models import db, Employee, Room, Booking, Admin, SupportTicket
+import os
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///meeting_rooms.db"
+app.config["SECRET_KEY"] = os.urandom(24)
 
 
 db.init_app(app)
-
 
 def is_logged_in():
     return "employeeid" in session
@@ -333,14 +335,12 @@ def generate_demo_data():
             booking1 = Booking(
                 employeeid=employee.employeeid,
                 roomid=room_alpha.roomid,
-                timebegin="2025-10-10 09:00",
-                timefinish="2025-10-10 10:00",
+                timefinish=(datetime.now() + timedelta(hours=2)).isoformat(),
             )
             booking2 = Booking(
                 employeeid=employee.employeeid,
                 roomid=room_beta.roomid,
-                timebegin="2025-10-10 11:00",
-                timefinish="2025-10-10 12:00",
+                timefinish=(datetime.now() + timedelta(hours=2,minutes=30)).isoformat(),
             )
             db.session.add_all([booking1, booking2])
 
