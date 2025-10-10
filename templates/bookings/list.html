@@ -27,7 +27,7 @@ System{% endblock %} {% block content %}
       <td>
         <form
           method="POST"
-          action="{{ url_for('cancel_booking', booking_id=booking.bookingid) }}"
+          action="{{ url_for('bookings.cancel_booking', booking_id=booking.bookingid) }}"
           style="display: inline"
         >
           <button
@@ -48,5 +48,5 @@ System{% endblock %} {% block content %}
 
 <hr />
 
-<p><a href="{{ url_for('new_booking') }}">Create New Booking</a></p>
+<p><a href="{{ url_for('bookings.new_booking') }}">Create New Booking</a></p>
 {% endblock %}

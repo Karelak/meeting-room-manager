@@ -26,7 +26,7 @@ System{% endblock %} {% block content %}
       <td>
         <form
           method="POST"
-          action="{{ url_for('cancel_booking', booking_id=booking.bookingid) }}"
+          action="{{ url_for('bookings.cancel_booking', booking_id=booking.bookingid) }}"
           style="display: inline"
         >
           <button
@@ -43,29 +43,4 @@ System{% endblock %} {% block content %}
 </table>
 {% else %}
 <p>You have no bookings.</p>
-{% endif %}
-
-<hr />
-
-<h3>Unread Notifications</h3>
-{% if notifications %}
-<table border="1">
-  <thead>
-    <tr>
-      <th>Message</th>
-      <th>Date</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for notification in notifications %}
-    <tr>
-      <td>{{ notification.message }}</td>
-      <td>{{ notification.created_at }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-<p><a href="{{ url_for('notifications') }}">View all notifications</a></p>
-{% else %}
-<p>No unread notifications.</p>
 {% endif %} {% endblock %}

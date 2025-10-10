@@ -6,7 +6,7 @@ System{% endblock %} {% block content %}
 
 <h3>Submit a Support Ticket</h3>
 
-<form method="POST" action="{{ url_for('support') }}">
+<form method="POST" action="{{ url_for('support.support') }}">
   <div>
     <label for="subject">Subject:</label>
     <input type="text" id="subject" name="subject" required />

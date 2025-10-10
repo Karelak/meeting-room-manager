@@ -26,7 +26,7 @@ Booking System{% endblock %} {% block content %}
       <td>
         <form
           method="POST"
-          action="{{ url_for('cancel_booking', booking_id=booking.bookingid) }}"
+          action="{{ url_for('bookings.cancel_booking', booking_id=booking.bookingid) }}"
           style="display: inline"
         >
           <button
@@ -74,7 +74,7 @@ Booking System{% endblock %} {% block content %}
 {% endif %}
 
 <h4>Create New User</h4>
-<form method="POST" action="{{ url_for('admin_create_user') }}">
+<form method="POST" action="{{ url_for('admin.admin_create_user') }}">
   <div>
     <label for="fname">First Name:</label>
     <input type="text" id="fname" name="fname" required />
@@ -133,7 +133,7 @@ Booking System{% endblock %} {% block content %}
 {% endif %}
 
 <h4>Create New Room</h4>
-<form method="POST" action="{{ url_for('admin_create_room') }}">
+<form method="POST" action="{{ url_for('rooms.admin_create_room') }}">
   <div>
     <label for="roomname">Room Name:</label>
     <input type="text" id="roomname" name="roomname" required />
@@ -177,7 +177,7 @@ Booking System{% endblock %} {% block content %}
       <td>
         <form
           method="POST"
-          action="{{ url_for('delete_ticket', ticket_id=ticket.ticketid) }}"
+          action="{{ url_for('support.delete_ticket', ticket_id=ticket.ticketid) }}"
           style="display: inline"
         >
           <button

@@ -54,6 +54,6 @@ Booking System{% endblock %} {% block content %}
 
 <hr />
 
-<p><a href="{{ url_for('new_booking') }}">Book This Room</a></p>
-<p><a href="{{ url_for('rooms') }}">Back to Rooms List</a></p>
+<p><a href="{{ url_for('bookings.new_booking') }}">Book This Room</a></p>
+<p><a href="{{ url_for('rooms.rooms') }}">Back to Rooms List</a></p>
 {% endblock %}

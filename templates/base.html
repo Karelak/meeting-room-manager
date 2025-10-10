@@ -8,14 +8,14 @@
       <h1>CAA Meeting Room Booking System</h1>
       {% if user %}
       <nav>
-        <a href="{{ url_for('dashboard') }}">Dashboard</a>
-        <a href="{{ url_for('rooms') }}">Rooms</a>
-        <a href="{{ url_for('bookings') }}">My Bookings</a>
-        <a href="{{ url_for('support') }}">Support</a>
+        <a href="{{ url_for('dashboard.dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('rooms.rooms') }}">Rooms</a>
+        <a href="{{ url_for('bookings.bookings') }}">My Bookings</a>
+        <a href="{{ url_for('support.support') }}">Support</a>
         {% if user.role == 'admin' %}
-        <a href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a>
+        <a href="{{ url_for('dashboard.admin_dashboard') }}">Admin Dashboard</a>
         {% endif %}
-        <a href="{{ url_for('logout') }}">Logout</a>
+        <a href="{{ url_for('auth.logout') }}">Logout</a>
       </nav>
       {% endif %}
     </header>
