@@ -53,6 +53,7 @@ def init_db():
             db.session.commit()
             print("Database initialized with admin account")
 
+
 def generate_demo_data():
     with app.app_context():
         # Ensure tables exist (safe if already created)
@@ -86,7 +87,9 @@ def generate_demo_data():
 
         # 2 bookings for that user (only if they have none)
         if Booking.query.filter_by(employeeid=employee.employeeid).count() == 0:
-            room_alpha = Room.query.filter_by(roomname="Alpha").first() or Room.query.first()
+            room_alpha = (
+                Room.query.filter_by(roomname="Alpha").first() or Room.query.first()
+            )
             room_beta = Room.query.filter_by(roomname="Beta").first() or room_alpha
 
             booking1 = Booking(
@@ -97,7 +100,9 @@ def generate_demo_data():
             booking2 = Booking(
                 employeeid=employee.employeeid,
                 roomid=room_beta.roomid,
-                timefinish=(datetime.now() + timedelta(hours=2,minutes=30)).isoformat(),
+                timefinish=(
+                    datetime.now() + timedelta(hours=2, minutes=30)
+                ).isoformat(),
             )
             db.session.add_all([booking1, booking2])
 
@@ -142,5 +147,5 @@ def generate_demo_data():
 
 if __name__ == "__main__":
     init_db()
-    generate_demo_data() # testing purposes
+    generate_demo_data()  # testing purposes
     app.run(debug=True)
