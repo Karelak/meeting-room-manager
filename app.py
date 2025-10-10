@@ -56,11 +56,8 @@ def init_db():
 
 def generate_demo_data():
     with app.app_context():
-        # Ensure tables exist (safe if already created)
-        db.create_all()
-
         # 1 staff user
-        staff_email = "jane.doe@example.com"
+        staff_email = "jane.doe@caa.co.uk"
         employee = Employee.query.filter_by(email=staff_email).first()
         if not employee:
             employee = Employee(

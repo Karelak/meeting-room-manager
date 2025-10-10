@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from models import db, Employee, Admin, SupportTicket
 
-support_bp = Blueprint('support', __name__)
+support_bp = Blueprint("support", __name__)
+
 
 def is_logged_in():
     return "employeeid" in session
@@ -51,11 +52,11 @@ def delete_ticket(ticket_id):
     user = get_current_user()
     ticket = SupportTicket.query.get_or_404(ticket_id)
     if user.role != "admin":
-        flash("You cannot delete tickets","error")
+        flash("You cannot delete tickets", "error")
         return redirect(url_for("dashboard.dashboard"))
-    
+
     db.session.delete(ticket)
     db.session.commit()
-    
+
     flash("Ticket deleted successfully", "success")
     return redirect(url_for("dashboard.admin_dashboard"))

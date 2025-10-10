@@ -1,7 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from models import db, Employee, Room, Booking
+from datetime import datetime
 
-bookings_bp = Blueprint('bookings', __name__)
+bookings_bp = Blueprint("bookings", __name__)
+
 
 def is_logged_in():
     return "employeeid" in session
@@ -36,6 +38,49 @@ def new_booking():
         timebegin = request.form.get("timebegin")
         timefinish = request.form.get("timefinish")
 
+        # Validate all fields are provided
+        if not all([roomid, timebegin, timefinish]):
+            flash("All fields are required", "error")
+            rooms = Room.query.all()
+            return render_template("bookings/new.html", user=user, rooms=rooms)
+
+        # Validate room exists
+        room = Room.query.get(roomid)
+        if not room:
+            flash("Invalid room selected", "error")
+            rooms = Room.query.all()
+            return render_template("bookings/new.html", user=user, rooms=rooms)
+
+        # Validate datetime format and parse
+        try:
+            begin_dt = datetime.fromisoformat(timebegin)
+            finish_dt = datetime.fromisoformat(timefinish)
+        except ValueError:
+            flash("Invalid date/time format", "error")
+            rooms = Room.query.all()
+            return render_template("bookings/new.html", user=user, rooms=rooms)
+
+        # Validate finish time is after begin time
+        if finish_dt <= begin_dt:
+            flash("End time must be after start time", "error")
+            rooms = Room.query.all()
+            return render_template("bookings/new.html", user=user, rooms=rooms)
+
+        # Validate booking is not in the past
+        if begin_dt < datetime.now():
+            flash("Cannot create bookings in the past", "error")
+            rooms = Room.query.all()
+            return render_template("bookings/new.html", user=user, rooms=rooms)
+
+        # Validate booking duration (going with with 8 hrs since nobody doing a )
+        duration = finish_dt - begin_dt
+        duration_hours = duration.total_seconds() / 3600
+        if duration_hours > 8:
+            flash("Booking duration cannot exceed 8 hours", "error")
+            rooms = Room.query.all()
+            return render_template("bookings/new.html", user=user, rooms=rooms)
+
+        # Check for conflicts
         conflicts = Booking.query.filter(
             Booking.roomid == roomid,
             Booking.timebegin < timefinish,
@@ -44,7 +89,10 @@ def new_booking():
 
         if conflicts:
             flash("This room is already booked for the selected time", "error")
-        else:
+            rooms = Room.query.all()
+            return render_template("bookings/new.html", user=user, rooms=rooms)
+
+        try:
             booking = Booking(
                 employeeid=user.employeeid,
                 roomid=roomid,
@@ -55,6 +103,11 @@ def new_booking():
             db.session.commit()
             flash("Booking created successfully", "success")
             return redirect(url_for("bookings.bookings"))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Error creating booking: {str(e)}", "error")
+            rooms = Room.query.all()
+            return render_template("bookings/new.html", user=user, rooms=rooms)
 
     rooms = Room.query.all()
     return render_template("bookings/new.html", user=user, rooms=rooms)
