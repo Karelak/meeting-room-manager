@@ -4,6 +4,20 @@ from models import db, Employee, Room, Booking
 rooms_bp = Blueprint("rooms", __name__)
 
 
+def quicksort_rooms(rooms, key_func):
+    if len(rooms) <= 1:
+        return rooms
+
+    pivot = rooms[len(rooms) // 2]
+    pivot_key = key_func(pivot)
+
+    left = [room for room in rooms if key_func(room) < pivot_key]
+    middle = [room for room in rooms if key_func(room) == pivot_key]
+    right = [room for room in rooms if key_func(room) > pivot_key]
+
+    return quicksort_rooms(left, key_func) + middle + quicksort_rooms(right, key_func)
+
+
 def is_logged_in():
     return "employeeid" in session
 
@@ -20,9 +34,9 @@ def rooms():
         return redirect(url_for("auth.login"))
 
     user = get_current_user()
-    all_rooms = Room.query.order_by(Room.floor, Room.roomname).all()
-
-    return render_template("rooms/list.html", user=user, rooms=all_rooms)
+    all_rooms = Room.query.all()
+    sorted_rooms = quicksort_rooms(all_rooms, lambda room: (room.floor, room.roomname))
+    return render_template("rooms/list.html", user=user, rooms=sorted_rooms)
 
 
 @rooms_bp.route("/rooms/<int:room_id>")

@@ -145,4 +145,4 @@ def generate_demo_data():
 if __name__ == "__main__":
     init_db()
     generate_demo_data()  # testing purposes
-    app.run(debug=True,host="0.0.0.0",port=8000)
+    app.run(debug=True, host="0.0.0.0", port=8000)
