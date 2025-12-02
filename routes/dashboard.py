@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, session, flash
 from models import db, Employee, Booking, Room, SupportTicket
+from routes.rooms import sorter
 
 dashboard_bp = Blueprint('dashboard', __name__)
 
@@ -27,8 +28,15 @@ def dashboard():
 
     user = get_current_user()
     bookings = Booking.query.filter_by(employeeid=user.employeeid).all()
-    
-    return render_template("dashboard/main.html", user=user, bookings=bookings)
+    bookings_sorted = sorter(
+        bookings,
+        key_func=lambda booking: (
+            booking.room.roomname if booking.room is not None else "",
+            booking.timebegin,
+        ),
+    )
+
+    return render_template("dashboard/main.html", user=user, bookings=bookings_sorted)
 
 
 @dashboard_bp.route("/admin/dashboard")
@@ -43,11 +51,34 @@ def admin_dashboard():
     all_rooms = Room.query.all()
     tickets = SupportTicket.query.all()
 
+    bookings_sorted = sorter(
+        all_bookings,
+        key_func=lambda booking: (
+            booking.room.roomname if booking.room is not None else "",
+            booking.timebegin,
+        ),
+    )
+
+    employees_sorted = sorter(
+        all_employees,
+        key_func=lambda employee: (employee.fname, employee.lname),
+    )
+
+    rooms_sorted = sorter(
+        all_rooms,
+        key_func=lambda room: (room.floor, room.roomname),
+    )
+
+    tickets_sorted = sorter(
+        tickets,
+        key_func=lambda ticket: ticket.created_at,
+    )
+
     return render_template(
         "dashboard/admin.html",
         user=user,
-        bookings=all_bookings,
-        employees=all_employees,
-        rooms=all_rooms,
-        tickets=tickets,
+        bookings=bookings_sorted,
+        employees=employees_sorted,
+        rooms=rooms_sorted,
+        tickets=tickets_sorted,
     )

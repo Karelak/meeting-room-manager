@@ -4,29 +4,16 @@ from models import db, Employee, Room, Booking
 rooms_bp = Blueprint("rooms", __name__)
 
 
-def quicksort_rooms(rooms):
-    # quick oneoff case
-    if len(rooms) <= 1:
-        return rooms
+def sorter(items, key_func):
+    if len(items) <= 1:
+        return items
 
-    pivot = rooms[len(rooms) // 2]
-    left = [
-        room
-        for room in rooms
-        if (room.floor, room.roomname) < (pivot.floor, pivot.roomname)
-    ]
-    middle = [
-        room
-        for room in rooms
-        if (room.floor, room.roomname) == (pivot.floor, pivot.roomname)
-    ]
-    right = [
-        room
-        for room in rooms
-        if (room.floor, room.roomname) > (pivot.floor, pivot.roomname)
-    ]
+    pivot = items[len(items) // 2]
+    left = [item for item in items if key_func(item) < key_func(pivot)]
+    middle = [item for item in items if key_func(item) == key_func(pivot)]
+    right = [item for item in items if key_func(item) > key_func(pivot)]
 
-    return quicksort_rooms(left) + middle + quicksort_rooms(right)
+    return sorter(left, key_func) + middle + sorter(right, key_func)
 
 
 def is_logged_in():
@@ -46,7 +33,7 @@ def rooms():
 
     user = get_current_user()
     all_rooms = Room.query.all()
-    sorted_rooms = quicksort_rooms(all_rooms)
+    sorted_rooms = sorter(all_rooms, key_func=lambda room: (room.floor, room.roomname))
     return render_template("rooms/list.html", user=user, rooms=sorted_rooms)
 
 

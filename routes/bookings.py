@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from models import db, Employee, Room, Booking
+from routes.rooms import sorter
 from datetime import datetime
 
 bookings_bp = Blueprint("bookings", __name__)
@@ -22,8 +23,15 @@ def bookings():
 
     user = get_current_user()
     user_bookings = Booking.query.filter_by(employeeid=user.employeeid).all()
+    sorted_bookings = sorter(
+        user_bookings,
+        key_func=lambda booking: (
+            booking.room.roomname if booking.room is not None else "",
+            booking.timebegin,
+        ),
+    )
 
-    return render_template("bookings/list.html", user=user, bookings=user_bookings)
+    return render_template("bookings/list.html", user=user, bookings=sorted_bookings)
 
 
 @bookings_bp.route("/bookings/new", methods=["GET", "POST"])
@@ -42,14 +50,22 @@ def new_booking():
         if not all([roomid, timebegin, timefinish]):
             flash("All fields are required", "error")
             rooms = Room.query.all()
-            return render_template("bookings/new.html", user=user, rooms=rooms)
+            rooms_sorted = sorter(
+                rooms,
+                key_func=lambda room: (room.roomname,),
+            )
+            return render_template("bookings/new.html", user=user, rooms=rooms_sorted)
 
         # Validate room exists
         room = Room.query.get(roomid)
         if not room:
             flash("Invalid room selected", "error")
             rooms = Room.query.all()
-            return render_template("bookings/new.html", user=user, rooms=rooms)
+            rooms_sorted = sorter(
+                rooms,
+                key_func=lambda room: (room.roomname,),
+            )
+            return render_template("bookings/new.html", user=user, rooms=rooms_sorted)
 
         # Validate datetime format and parse
         try:
@@ -58,19 +74,31 @@ def new_booking():
         except ValueError:
             flash("Invalid date/time format", "error")
             rooms = Room.query.all()
-            return render_template("bookings/new.html", user=user, rooms=rooms)
+            rooms_sorted = sorter(
+                rooms,
+                key_func=lambda room: (room.roomname,),
+            )
+            return render_template("bookings/new.html", user=user, rooms=rooms_sorted)
 
         # Validate finish time is after begin time
         if finish_dt <= begin_dt:
             flash("End time must be after start time", "error")
             rooms = Room.query.all()
-            return render_template("bookings/new.html", user=user, rooms=rooms)
+            rooms_sorted = sorter(
+                rooms,
+                key_func=lambda room: (room.roomname,),
+            )
+            return render_template("bookings/new.html", user=user, rooms=rooms_sorted)
 
         # Validate booking is not in the past
         if begin_dt < datetime.now():
             flash("Cannot create bookings in the past", "error")
             rooms = Room.query.all()
-            return render_template("bookings/new.html", user=user, rooms=rooms)
+            rooms_sorted = sorter(
+                rooms,
+                key_func=lambda room: (room.roomname,),
+            )
+            return render_template("bookings/new.html", user=user, rooms=rooms_sorted)
 
         # Validate booking duration (going with with 8 hrs since nobody doing a )
         duration = finish_dt - begin_dt
@@ -78,7 +106,11 @@ def new_booking():
         if duration_hours > 8:
             flash("Booking duration cannot exceed 8 hours", "error")
             rooms = Room.query.all()
-            return render_template("bookings/new.html", user=user, rooms=rooms)
+            rooms_sorted = sorter(
+                rooms,
+                key_func=lambda room: (room.roomname,),
+            )
+            return render_template("bookings/new.html", user=user, rooms=rooms_sorted)
 
         # Check for conflicts
         conflicts = Booking.query.filter(
@@ -90,7 +122,11 @@ def new_booking():
         if conflicts:
             flash("This room is already booked for the selected time", "error")
             rooms = Room.query.all()
-            return render_template("bookings/new.html", user=user, rooms=rooms)
+            rooms_sorted = sorter(
+                rooms,
+                key_func=lambda room: (room.roomname,),
+            )
+            return render_template("bookings/new.html", user=user, rooms=rooms_sorted)
 
         try:
             booking = Booking(
@@ -110,7 +146,11 @@ def new_booking():
             return render_template("bookings/new.html", user=user, rooms=rooms)
 
     rooms = Room.query.all()
-    return render_template("bookings/new.html", user=user, rooms=rooms)
+    rooms_sorted = sorter(
+        rooms,
+        key_func=lambda room: (room.roomname,),
+    )
+    return render_template("bookings/new.html", user=user, rooms=rooms_sorted)
 
 
 @bookings_bp.route("/bookings/<int:booking_id>/cancel", methods=["POST"])

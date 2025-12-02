@@ -2,20 +2,26 @@
 <html>
   <head>
     <title>{% block title %}Meeting Room Booking System{% endblock %}</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
   </head>
   <body>
     <header>
       <h1>CAA Meeting Room Booking System</h1>
       {% if user %}
       <nav>
+        {% if user.role == 'admin' %}
+        <a href="{{ url_for('dashboard.admin_dashboard') }}">Admin Dashboard</a>
+        <a href="{{ url_for('auth.logout') }}">Logout</a>
+        {% else %}
         <a href="{{ url_for('dashboard.dashboard') }}">Dashboard</a>
         <a href="{{ url_for('rooms.rooms') }}">Rooms</a>
         <a href="{{ url_for('bookings.bookings') }}">My Bookings</a>
         <a href="{{ url_for('support.support') }}">Support</a>
-        {% if user.role == 'admin' %}
-        <a href="{{ url_for('dashboard.admin_dashboard') }}">Admin Dashboard</a>
-        {% endif %}
         <a href="{{ url_for('auth.logout') }}">Logout</a>
+        {% endif %}
       </nav>
       {% endif %}
     </header>

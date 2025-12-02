@@ -1,39 +1,24 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Login - Meeting Room Booking System</title>
-  </head>
-  <body>
-    <header>
-      <h1>CAA Meeting Room Booking System</h1>
-      <h2>Login</h2>
-    </header>
+{% extends "base.html" %} {% block title %}Login - Meeting Room Booking System{%
+endblock %} {% block content %}
+<h2>Login</h2>
 
-    <main>
-      {% with messages = get_flashed_messages(with_categories=true) %} {% if
-      messages %} {% for category, message in messages %}
-      <h3 class="flash-{{ category }}">{{ message }}</h3>
-      {% endfor %} {% endif %} {% endwith %}
+<h3>Please enter your credentials</h3>
 
-      <h3>Please enter your credentials</h3>
+<form method="POST" action="{{ url_for('auth.login') }}">
+  <div>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required />
+  </div>
 
-      <form method="POST" action="{{ url_for('auth.login') }}">
-        <div>
-          <label for="email">Email:</label>
-          <input type="email" id="email" name="email" required />
-        </div>
+  <div>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required />
+  </div>
 
-        <div>
-          <label for="password">Password:</label>
-          <input type="password" id="password" name="password" required />
-        </div>
+  <div>
+    <button type="submit">Login</button>
+  </div>
+</form>
 
-        <div>
-          <button type="submit">Login</button>
-        </div>
-      </form>
-
-      <hr />
-    </main>
-  </body>
-</html>
+<hr />
+{% endblock %}
