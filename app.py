@@ -1,7 +1,7 @@
 from flask import Flask
 from models import db, Employee, Admin, Room, Booking, SupportTicket
 import os
-from datetime import datetime, timedelta
+from datetime import datetime
 
 # Import blueprints
 from routes.auth import auth_bp
@@ -17,6 +17,18 @@ app.config["SECRET_KEY"] = os.urandom(32)
 
 
 db.init_app(app)
+
+
+@app.template_filter("iso_to_dmy_hm")
+def iso_to_dmy_hm(value):
+    if not value:
+        return ""
+    try:
+        dt = datetime.fromisoformat(value)
+        return dt.strftime("%d-%m-%Y %H:%M")
+    except ValueError:
+        return value
+
 
 # Register blueprints
 app.register_blueprint(auth_bp)

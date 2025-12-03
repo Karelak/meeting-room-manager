@@ -21,8 +21,8 @@ Booking System{% endblock %} {% block content %}
       <td>{{ booking.bookingid }}</td>
       <td>{{ booking.employee.fname }} {{ booking.employee.lname }}</td>
       <td>{{ booking.room.roomname }} (Floor {{ booking.room.floor }})</td>
-      <td>{{ booking.timebegin }}</td>
-      <td>{{ booking.timefinish }}</td>
+      <td>{{ booking.timebegin | iso_to_dmy_hm }}</td>
+      <td>{{ booking.timefinish | iso_to_dmy_hm }}</td>
       <td>
         <form
           method="POST"
