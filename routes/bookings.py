@@ -31,7 +31,27 @@ def bookings():
         ),
     )
 
-    return render_template("bookings/list.html", user=user, bookings=sorted_bookings)
+    def fmt(timestamp) -> str:
+        if not timestamp:
+            return ""
+        try:
+            dt = datetime.fromisoformat(timestamp)
+            return dt.strftime("%d-%m-%Y %H:%M")
+        except ValueError:
+            return timestamp  # fallback if parsing fails
+
+    display_bookings = [
+        {
+            "bookingid": b.bookingid,
+            "roomname": b.room.roomname if b.room is not None else "",
+            "floor": b.room.floor if b.room is not None else "",
+            "timebegin": fmt(b.timebegin),
+            "timefinish": fmt(b.timefinish),
+        }
+        for b in sorted_bookings
+    ]
+
+    return render_template("bookings/list.html", user=user, bookings=display_bookings)
 
 
 @bookings_bp.route("/bookings/new", methods=["GET", "POST"])

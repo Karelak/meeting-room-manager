@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from models import db, Employee
 
-auth_bp = Blueprint('auth', __name__)
+auth_bp = Blueprint("auth", __name__)
+
 
 def is_logged_in():
     return "employeeid" in session
@@ -23,9 +24,11 @@ def login():
         if employee and employee.password == password:
             session["employeeid"] = employee.employeeid
             session["role"] = employee.role
+            flash("Login successful", "success")
             if employee.role == "admin":
                 return redirect(url_for("dashboard.admin_dashboard"))
-            elif employee.role == "user":
+            else:
+                # staff, senior, or any other non-admin role
                 return redirect(url_for("dashboard.dashboard"))
         else:
             flash("Invalid email or password", "error")
