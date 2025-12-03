@@ -1,0 +1,51 @@
+{% extends "base.html" %} {% block title %}Dashboard · Meeting Room Manager{%
+endblock %} {% block page %}
+<section>
+  <h1>Upcoming meetings</h1>
+  {% if upcoming %}
+  <ul class="card-list">
+    {% for booking in upcoming %}
+    <li class="card">
+      <header>{{ booking.title }}</header>
+      <div>
+        {{ booking.room.name }} · {{ booking.start_ts.strftime('%d %b %H:%M') }}
+        → {{ booking.end_ts.strftime('%H:%M') }}
+      </div>
+      <footer>Status: {{ booking.status }}</footer>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>No meetings scheduled.</p>
+  {% endif %}
+</section>
+<section>
+  <h2>Notifications</h2>
+  <ul class="list">
+    {% for notice in notices %}
+    <li>
+      {{ notice.message }}
+      <span class="muted">{{ notice.created_at.strftime('%d %b %H:%M') }}</span>
+    </li>
+    {% else %}
+    <li>No unread notifications</li>
+    {% endfor %}
+  </ul>
+</section>
+<section>
+  <h2>Popular rooms</h2>
+  <div class="grid">
+    {% for room in rooms %}
+    <article class="card">
+      <h3>{{ room.name }}</h3>
+      <p>Floor {{ room.floor }} · {{ room.capacity }} seats</p>
+      <a href="{{ url_for('rooms.detail', room_id=room.id) }}" class="btn-link"
+        >View room</a
+      >
+    </article>
+    {% else %}
+    <p>No rooms defined yet.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

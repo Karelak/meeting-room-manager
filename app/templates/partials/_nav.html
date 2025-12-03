@@ -1,0 +1,18 @@
+<nav class="app-nav">
+  <div class="logo">CAA Meeting Rooms</div>
+  <ul>
+    <li><a href="{{ url_for('dashboard.home') }}">Dashboard</a></li>
+    <li><a href="{{ url_for('rooms.index') }}">Rooms</a></li>
+    <li><a href="{{ url_for('bookings.index') }}">Bookings</a></li>
+    <li><a href="{{ url_for('support.index') }}">Support</a></li>
+    {% if current_user.is_authenticated and current_user.role == 'admin' %}
+    <li><a href="{{ url_for('admin.dashboard') }}">Admin</a></li>
+    {% endif %}
+  </ul>
+  <div class="user-meta">
+    {% if current_user.is_authenticated %}
+    <span>{{ current_user.get_full_name() }}</span>
+    <a class="btn-link" href="{{ url_for('auth.logout') }}">Logout</a>
+    {% endif %}
+  </div>
+</nav>

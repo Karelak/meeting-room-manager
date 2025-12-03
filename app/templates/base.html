@@ -1,0 +1,8 @@
+{% extends "partials/layout.html" %} {% block body %}
+<div class="app-shell">
+  {% include "partials/_nav.html" %}
+  <main class="app-content">
+    {% include "partials/_flash.html" %} {% block page %}{% endblock %}
+  </main>
+</div>
+{% endblock %}
